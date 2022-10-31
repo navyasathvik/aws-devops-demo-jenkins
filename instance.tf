@@ -1,5 +1,5 @@
 resource "aws_instance" "web" {
-  ami                         = "ami-09e67e426f25ce0d7" #Ubuntu 20.04 LTS Free Tier Image
+  ami                         = "ami-09d3b3274b6c5d4aa" #Ubuntu 20.04 LTS Free Tier Image
   instance_type               = "t3.micro"
   key_name                    = "navya"
   subnet_id                   = aws_subnet.public_subnet.id
