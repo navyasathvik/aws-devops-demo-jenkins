@@ -1,0 +1,65 @@
+pipeline {
+    agent {
+        label'terarform'
+
+    }
+    environment {
+        AWS_ACCESS_KEY_ID =credentials('aws_access_key_id')
+        AWS_SECRET_ACCESS_KEY=credentials('aws_secret_access_key')
+    }
+    stages {
+        stage('initialize terarform') {
+            steps{
+                sh'terraform init'
+            }
+        }
+        stage('format config files') {
+            steps {
+                sh'terraform fmt -check=0 || exit 1'
+            }
+        }
+        stage('validate config files') {
+            steps {
+                sh'terraform validate'
+            }
+        }
+        stage('generate plan'){
+            steps{
+                sh'terraform plan -out =terraform plan'
+                sh'terraform show -json ./terraform plan > terraform_plan.json'
+            }
+        }
+        stage('publish artifacts for terraform plan') {
+            steps {
+                archive artifacts 'terraform_plan.ajson',excludes:'output/*.md,only if successful:true'
+            }
+        }
+        stage('run terraform apply or not') {
+            steps {
+                script{
+                    env.selected_action = input message: 'select action to perform ,'ok:' procced',id:'tag_id',
+                    parameters:[choice(choices: ['apply','destroy','abort'],description:'select action', name: 'action)']
+                }
+            }
+        }
+        stage('terraform apply') {
+            script{
+                if(env.selected_action == "apply") {
+                    sh'terraform apply -auto-approve'
+                }
+                else if (env.selected_action == "destroy") {
+                    sh'terraform destroy -auto-approve'
+                }
+                else {
+                    echo 'no need to create a resource as of now, so aborted!!!'
+                }
+            }
+        }
+        
+    
+    }
+
+
+
+
+}
