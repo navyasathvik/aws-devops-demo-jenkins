@@ -12,6 +12,6 @@ resource "aws_instance" "web" {
 
 
   tags = {
-    "Name" = "WebApp-terraform"
+    Name = "WebApp-terraform"
   }
 }
