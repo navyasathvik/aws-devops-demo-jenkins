@@ -7,8 +7,7 @@ resource "aws_instance" "web" {
   user_data                   = file("nginx-install.sh")
   availability_zone           = "us-east-1a"
   associate_public_ip_address = true
-  aws_access_key_id ="AKIA5RGHZUKSZ32ZZVUF"
-  aws_secret_access_key="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"
+ 
 
 
 
